@@ -52,3 +52,8 @@
 
 # Folder containing extra ibraries required for hive compilation/execution can be controlled by:
 # export HIVE_AUX_JARS_PATH=
+
+# Set some env for tez
+export TEZ_CONF_DIR=$HADOOP_CONF_DIR
+export TEZ_JARS=/opt/tez/*:/opt/tez/lib/*
+export HADOOP_CLASSPATH=$TEZ_CONF_DIR:$TEZ_JARS:$HADOOP_CLASSPATH

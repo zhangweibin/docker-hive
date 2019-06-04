@@ -11,6 +11,7 @@ services:
       - ./hadoop-hive.env
     ports:
       - "50070:50070"
+      - "8020:8020"
   datanode:
     image: bde2020/hadoop-datanode:2.0.0-hadoop2.7.4-java8
     volumes:
@@ -21,17 +22,44 @@ services:
       SERVICE_PRECONDITION: "namenode:50070"
     ports:
       - "50075:50075"
+      - "50010:50010"
+  resourcemanager:
+    image: bde2020/hadoop-resourcemanager:2.0.0-hadoop2.7.4-java8
+    environment:
+      SERVICE_PRECONDITION: "namenode:50070 datanode:50075"
+    env_file:
+      - ./hadoop-hive.env
+    ports:
+      - "8088:8088"
+  historyserver:
+    image: bde2020/hadoop-historyserver:2.0.0-hadoop2.7.4-java8
+    environment:
+      SERVICE_PRECONDITION: "namenode:50070 datanode:50075 resourcemanager:8088"
+    volumes:
+      - historyserver:/hadoop/yarn/timeline
+    env_file:
+      - ./hadoop-hive.env
+    ports:
+      - "8188:8188"
+  nodemanager:
+    image: bde2020/hadoop-nodemanager:2.0.0-hadoop2.7.4-java8
+    environment:
+      SERVICE_PRECONDITION: "namenode:50070 datanode:50075 resourcemanager:8088"
+    env_file:
+      - ./hadoop-hive.env
+    ports:
+      - "8042:8042"
   hive-server:
-    image: bde2020/hive:2.3.2-postgresql-metastore
+    image: local/hive-on-tez:2.3.5-0.9.2
     env_file:
       - ./hadoop-hive.env
     environment:
       HIVE_CORE_CONF_javax_jdo_option_ConnectionURL: "jdbc:postgresql://hive-metastore/metastore"
-      SERVICE_PRECONDITION: "hive-metastore:9083"
+      SERVICE_PRECONDITION: "hive-metastore:9083 namenode:50070 datanode:50075"
     ports:
       - "10000:10000"
   hive-metastore:
-    image: bde2020/hive:2.3.2-postgresql-metastore
+    image: local/hive-on-tez:2.3.5-0.9.2
     env_file:
       - ./hadoop-hive.env
     command: /opt/hive/bin/hive --service metastore
@@ -41,11 +69,14 @@ services:
       - "9083:9083"
   hive-metastore-postgresql:
     image: bde2020/hive-metastore-postgresql:2.3.0
+    ports:
+      - "54320:5432"
   presto-coordinator:
-    image: shawnzhu/prestodb:0.181
+    image: shawnzhu/prestodb:300
     ports:
       - "8080:8080"
 
 volumes:
   namenode:
   datanode:
+  historyserver:
