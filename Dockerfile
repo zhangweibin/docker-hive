@@ -18,7 +18,7 @@ ENV HADOOP_HOME /opt/hadoop-$HADOOP_VERSION
 
 WORKDIR /opt
 
-#Install Hive and PostgreSQL JDBC
+#Install Hive , TEZ and PostgreSQL JDBC
 RUN curl -O http://mirror.bit.edu.cn/apache/hive/hive-$HIVE_VERSION/apache-hive-$HIVE_VERSION-bin.tar.gz && \
 	tar -xzvf apache-hive-$HIVE_VERSION-bin.tar.gz && \
 	mv apache-hive-$HIVE_VERSION-bin hive && \
@@ -29,14 +29,23 @@ RUN curl -O http://mirror.bit.edu.cn/apache/hive/hive-$HIVE_VERSION/apache-hive-
         mv apache-tez-$TEZ_VERSION-bin tez && \
         rm apache-tez-$TEZ_VERSION-bin.tar.gz && \
         rm -f tez/lib/hadoop-mapreduce-client-c*.jar && \
-        cp /opt/hadoop-2.7.4/share/hadoop/mapreduce/hadoop-mapreduce-client-c*.jar tez/lib
+        cp $HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-client-c*.jar tez/lib
+
+#Install Impala
+ADD impala/sources.list /etc/apt
+ADD impala/archive.key /opt
+ADD impala/cloudera.list /etc/apt/sources.list.d
+RUN apt-key add archive.key && \
+        apt-get update && apt-get install -y impala impala-server impala-shell impala-catalog impala-state-store && \
+        apt-get clean && \
+	rm -rf /var/lib/apt/lists/*
 
 #Spark should be compiled with Hive to be able to use it
 #hive-site.xml should be copied to $SPARK_HOME/conf folder
 
 #Custom configuration goes here
-ADD conf/tez-site.xml /etc/hadoop
-ADD conf/hadoop-env.sh /etc/hadoop
+ADD conf/tez-site.xml $HADOOP_CONF_DIR
+ADD conf/hadoop-env.sh $HADOOP_CONF_DIR
 ADD conf/hive-site.xml $HIVE_HOME/conf
 ADD conf/beeline-log4j2.properties $HIVE_HOME/conf
 ADD conf/hive-env.sh $HIVE_HOME/conf
@@ -53,6 +62,11 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 
 EXPOSE 10000
 EXPOSE 10002
+EXPOSE 21000
+EXPOSE 21050
+EXPOSE 25000
+EXPOSE 25010
+EXPOSE 25020
 
 ENTRYPOINT ["entrypoint.sh"]
 CMD startup.sh
