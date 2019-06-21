@@ -35,7 +35,7 @@ services:
     image: bde2020/hadoop-historyserver:2.0.0-hadoop2.7.4-java8
     environment:
       SERVICE_PRECONDITION: "namenode:50070 datanode:50075 resourcemanager:8088"
-    commamd: $HADOOP_PREFIX/bin/yarn --config $HADOOP_CONF_DIR timelineserver && $HADOOP_PREFIX/sbin/mr-jobhistory-daemon.sh start historyserver
+    command: /opt/hadoop-2.7.4/bin/yarn --config /etc/hadoop timelineserver && /opt/hadoop-2.7.4/sbin/mr-jobhistory-daemon.sh start historyserver
     volumes:
       - historyserver:/hadoop/yarn/timeline
     env_file:
@@ -105,7 +105,7 @@ services:
     ports:
       - 16020:16020
       - 16030:16030
-  
+
   presto-coordinator:
     image: shawnzhu/prestodb:300
     ports:
