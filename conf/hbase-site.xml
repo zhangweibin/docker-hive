@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 <!--
-/**
+     /**
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,15 +21,4 @@
  */
 -->
 <configuration>
-<property><name>hbase.regionserver.hostname</name><value>hbase-region</value></property>
-<property><name>hbase.master.info.port</name><value>16010</value></property>
-<property><name>DIR</name><value>/etc/hbase</value></property>
-<property><name>hbase.cluster.distributed</name><value>true</value></property>
-<property><name>hbase.master.port</name><value>16000</value></property>
-<property><name>hbase.zookeeper.quorum</name><value>zoo</value></property>
-<property><name>hbase.master</name><value>hbase-master:16000</value></property>
-<property><name>hbase.regionserver.port</name><value>16020</value></property>
-<property><name>hbase.regionserver.info.port</name><value>16030</value></property>
-<property><name>hbase.master.hostname</name><value>hbase-master</value></property>
-<property><name>hbase.rootdir</name><value>hdfs://namenode:8020/hbase</value></property>
 </configuration>

@@ -18,3 +18,6 @@ cp $HIVE_HOME/conf/hive-site.xml /etc/impala/conf/
 
 cd $HIVE_HOME/bin
 ./hiveserver2 --hiveconf hive.server2.enable.doAs=false
+
+cd /opt/kylin/bin
+bash kylin.sh start

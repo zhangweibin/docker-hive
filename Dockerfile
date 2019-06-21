@@ -18,7 +18,7 @@ ENV HADOOP_HOME /opt/hadoop-$HADOOP_VERSION
 
 WORKDIR /opt
 
-#Install Hive , TEZ and PostgreSQL JDBC
+#Install Hive, TEZ and PostgreSQL JDBC
 RUN curl -O http://mirror.bit.edu.cn/apache/hive/hive-$HIVE_VERSION/apache-hive-$HIVE_VERSION-bin.tar.gz && \
 	tar -xzvf apache-hive-$HIVE_VERSION-bin.tar.gz && \
 	mv apache-hive-$HIVE_VERSION-bin hive && \
@@ -40,8 +40,29 @@ RUN apt-key add archive.key && \
         apt-get clean && \
 	rm -rf /var/lib/apt/lists/*
 
-#Spark should be compiled with Hive to be able to use it
-#hive-site.xml should be copied to $SPARK_HOME/conf folder
+#Install Hbase, Kylin and Spark
+RUN curl -O http://mirror.bit.edu.cn/apache/hbase/1.3.5/hbase-1.3.5-bin.tar.gz && \
+        tar -xzvf hbase-1.3.5-bin.tar.gz && \
+        mv hbase-1.3.5-bin hbase && \
+        rm /usr/bin/hbase && \
+        ln -s /opt/hbase/bin/hbase /usr/bin/hbase && \
+        ln -s /opt/hbase/bin/hbase-config.sh /usr/bin/hbase-config.sh && \
+        rm hbase-1.3.5-bin.tar.gz && \
+        curl -O http://mirror.bit.edu.cn/apache/kylin/apache-kylin-2.6.2/apache-kylin-2.6.2-bin-hbase1x.tar.gz && \
+        tar -xzvf apache-kylin-2.6.2-bin-hbase1x.tar.gz && \
+        mv apache-kylin-2.6.2-bin-hbase1x kylin && \
+        rm apache-kylin-2.6.2-bin-hbase1x.tar.gz && \
+        curl -O http://mirror.bit.edu.cn/apache/spark/spark-2.4.3/spark-2.4.3-bin-hadoop2.7.tgz && \
+        tar -xzvf spark-2.4.3-bin-hadoop2.7.tgz && \
+        mv spark-2.4.3-bin-hadoop2.7 spark && \
+        rm -rf spark/lib/spark-examples-* && \
+        rm -rf spark/examples && \
+        rm -rf spark/data && \
+        rm -rf spark/R && \
+        mv spark kylin && \
+        rm spark-2.4.3-bin-hadoop2.7.tgz
+  
+
 
 #Custom configuration goes here
 ADD conf/tez-site.xml $HADOOP_CONF_DIR
@@ -53,6 +74,8 @@ ADD conf/hive-exec-log4j2.properties $HIVE_HOME/conf
 ADD conf/hive-log4j2.properties $HIVE_HOME/conf
 ADD conf/ivysettings.xml $HIVE_HOME/conf
 ADD conf/llap-daemon-log4j2.properties $HIVE_HOME/conf
+ADD conf/hbase-site.xml /opt/hbase/conf
+ADD kylin/kylin_job_conf.xml /opt/kylin/conf
 
 COPY startup.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/startup.sh
@@ -67,6 +90,7 @@ EXPOSE 21050
 EXPOSE 25000
 EXPOSE 25010
 EXPOSE 25020
+EXPOSE 7070
 
 ENTRYPOINT ["entrypoint.sh"]
 CMD startup.sh
