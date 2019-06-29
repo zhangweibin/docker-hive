@@ -43,7 +43,7 @@ RUN apt-key add archive.key && \
 #Install Hbase, Kylin and Spark
 RUN curl -O http://mirror.bit.edu.cn/apache/hbase/1.3.5/hbase-1.3.5-bin.tar.gz && \
         tar -xzvf hbase-1.3.5-bin.tar.gz && \
-        mv hbase-1.3.5-bin hbase && \
+        mv hbase-1.3.5 hbase && \
         rm /usr/bin/hbase && \
         ln -s /opt/hbase/bin/hbase /usr/bin/hbase && \
         ln -s /opt/hbase/bin/hbase-config.sh /usr/bin/hbase-config.sh && \
