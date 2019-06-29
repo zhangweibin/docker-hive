@@ -1,0 +1,19 @@
+127.0.0.1	localhost
+::1	localhost ip6-localhost ip6-loopback
+fe00::0	ip6-localnet
+ff00::0	ip6-mcastprefix
+ff02::1	ip6-allnodes
+ff02::2	ip6-allrouters
+172.66.0.2 namenode
+172.66.0.3 datanode
+172.66.0.4 resourcemanager
+172.66.0.5 historyserver
+172.66.0.6 nodemanager
+172.66.0.7 hive-server
+172.66.0.8 hive-metastore
+172.66.0.9 hive-metastore-postgresql
+172.66.0.10 zoo
+172.66.0.11 hbase-master
+172.66.0.12 hbase-region
+172.66.0.13 presto-coordinator
+172.66.0.14 nginx-proxy
