@@ -16,8 +16,8 @@ cp $HIVE_HOME/conf/hive-site.xml /etc/impala/conf/
 /bin/bash -c 'exec /etc/init.d/impala-catalog start'
 /bin/bash -c 'exec /etc/init.d/impala-server start'
 
-cd $HIVE_HOME/bin
-./hiveserver2 --hiveconf hive.server2.enable.doAs=false
-
 cd /opt/kylin/bin
 bash kylin.sh start
+
+cd $HIVE_HOME/bin
+./hiveserver2 --hiveconf hive.server2.enable.doAs=false
