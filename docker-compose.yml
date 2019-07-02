@@ -53,11 +53,12 @@ services:
   historyserver:
     image: bde2020/hadoop-historyserver:2.0.0-hadoop2.7.4-java8
     hostname: historyserver
+    command: /opt/start.sh
     environment:
       SERVICE_PRECONDITION: "namenode:50070 datanode:50075 resourcemanager:8088"
-    command: /opt/hadoop-2.7.4/bin/yarn --config /etc/hadoop timelineserver && /opt/hadoop-2.7.4/sbin/mr-jobhistory-daemon.sh start historyserver
     volumes:
       - historyserver:/hadoop/yarn/timeline
+      - ./historyserver/start.sh:/opt/start.sh
       - ./network/hosts:/etc/hosts
       - /etc/resolv.conf:/etc/resolv.conf
     env_file:
@@ -88,6 +89,7 @@ services:
     volumes:
       - ./network/hosts:/etc/hosts
       - /etc/resolv.conf:/etc/resolv.conf
+      - ../csv:/opt/csv
     env_file:
       - ./hadoop-hive.env
       - ./hbase-distributed-local.env
